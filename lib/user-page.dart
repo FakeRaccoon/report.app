@@ -2,18 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:report/api.dart';
+import 'package:report/controllers/user-page-controller.dart';
 import 'package:report/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class UserPage extends StatefulWidget {
-  const UserPage({Key key}) : super(key: key);
-
-  @override
-  _UserPageState createState() => _UserPageState();
-}
-
-class _UserPageState extends State<UserPage> {
-  late SharedPreferences sp;
+class UserPage extends StatelessWidget {
+  final controller = Get.put(UserPageController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,14 +31,8 @@ class _UserPageState extends State<UserPage> {
             SizedBox(
               width: Get.width,
               child: ElevatedButton(
-                onPressed: () async {
-                  APIService().logout().then((value) async {
-                    if (value == 200) {
-                      sp = await SharedPreferences.getInstance();
-                      sp.clear();
-                      Get.offAll(() => Root());
-                    }
-                  });
+                onPressed: () {
+                  controller.logout();
                 },
                 child: Text('Logout'),
               ),

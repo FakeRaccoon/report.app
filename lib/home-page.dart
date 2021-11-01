@@ -15,37 +15,10 @@ import 'package:report/sales-direct-llist.dart';
 import 'package:report/user-page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Home extends StatefulWidget {
-  const Home({Key key}) : super(key: key);
+import 'Model/form-model.dart';
 
-  @override
-  _HomeState createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  TabController tabController;
-
-  TextEditingController fromDate = TextEditingController();
-  TextEditingController toDate = TextEditingController();
-
-  final Controller controller = Get.put(Controller());
-  final Controller find = Get.find();
-
-  SharedPreferences sp;
-
-  @override
-  void initState() {
-    super.initState();
-    tabController = TabController(length: 3, vsync: this);
-    fromDate.text = DateFormat('dd MMM y').format(DateTime(2020, 10, 1)).toString();
-    toDate.text = DateFormat('dd MMM y').format(DateTime.now()).toString();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    tabController.dispose();
-  }
+class HomePage extends StatelessWidget {
+  final controller = Get.put(Controller());
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +26,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        backwardsCompatibility: false,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: Text('Report', style: GoogleFonts.sourceSansPro(fontWeight: FontWeight.bold, color: Colors.black)),
         actions: [
           IconButton(
@@ -77,8 +50,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 children: [
                   InkWell(
                     onTap: () {
-                      if (find.isFilterActive.value == false) {
-                        find.clearFilter();
+                      if (controller.isFilterActive.value == false) {
+                        controller.clearFilter();
                       }
                       showMaterialModalBottomSheet(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
@@ -102,45 +75,35 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 ],
               ),
             ),
-            if (find.filter.value.mainFilter == "Sales Direct")
+            if (controller.mainFilter.value == "Sales Direct") Expanded(child: SalesDirectReportList()),
+            if (controller.mainFilter.value == "Sales Counter")
               Expanded(
-                child: find.isLoading.value == true
-                    ? Center(child: CircularProgressIndicator())
-                    : SalesDirectReportList(
-                        formModel: find.report.value,
-                        mainFilter: find.filter.value.mainFilter,
-                        salesDirect: find.filter.value.salesDirectType,
-                        salesId: find.filter.value.salesId,
-                      ),
-              ),
-            if (find.filter.value.mainFilter == "Sales Counter")
-              Expanded(
-                child: find.isLoading.value == true
+                child: controller.isLoading.value == true
                     ? Center(child: CircularProgressIndicator())
                     : SalesCounterReportList(
-                        formModel: find.report.value,
-                        mainFilter: find.filter.value.mainFilter,
-                        employeeId: find.filter.value.salesId,
+                        formModel: controller.report.value,
+                        mainFilter: controller.mainFilter.value,
+                        employeeId: controller.salesId.value,
                       ),
               ),
-            if (find.filter.value.mainFilter == "Programmer")
+            if (controller.mainFilter.value == "Programmer")
               Expanded(
-                child: find.isLoading.value == true
+                child: controller.isLoading.value == true
                     ? Center(child: CircularProgressIndicator())
                     : ProgrammerReportList(
-                        formModel: find.report.value,
-                        mainFilter: find.filter.value.mainFilter,
-                        employeeId: find.filter.value.salesId,
+                        formModel: controller.report.value,
+                        mainFilter: controller.mainFilter.value,
+                        employeeId: controller.salesId.value,
                       ),
               ),
-            if (find.filter.value.mainFilter == "Multimedia")
+            if (controller.mainFilter.value == "Multimedia")
               Expanded(
-                child: find.isLoading.value == true
+                child: controller.isLoading.value == true
                     ? Center(child: CircularProgressIndicator())
                     : MultimediaReportList(
-                        formModel: find.report.value,
-                        mainFilter: find.filter.value.mainFilter,
-                        employeeId: find.filter.value.salesId,
+                        formModel: controller.report.value,
+                        mainFilter: controller.mainFilter.value,
+                        employeeId: controller.salesId.value,
                       ),
               ),
           ],
